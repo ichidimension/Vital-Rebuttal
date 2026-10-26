@@ -71,13 +71,25 @@
                 <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-center">
                     <i class="fa-solid fa-stopwatch text-emerald-600 mr-1"></i> スピーチタイマー
                 </div>
-                <div id="timerDisplay" class="text-3xl font-extrabold text-slate-900 font-mono tracking-wider mb-2 bg-slate-50 py-1.5 rounded border border-slate-200 shadow-inner">02:00</div>
-                <div class="grid grid-cols-5 gap-1">
+                <div id="timerDisplay" class="text-3xl font-extrabold text-slate-900 font-mono tracking-wider mb-2 bg-slate-50 py-1.5 rounded border border-slate-200 shadow-inner">03:00</div>
+                <div class="grid grid-cols-7 gap-1">
                     <button onclick="setTimerTime(60)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] py-1 rounded font-bold transition">1分</button>
                     <button onclick="setTimerTime(120)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] py-1 rounded font-bold transition">2分</button>
                     <button onclick="setTimerTime(180)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] py-1 rounded font-bold transition">3分</button>
-                    <button id="timerStartBtn" onclick="toggleTimer()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] py-1 rounded font-bold transition">開始</button>
-                    <button onclick="resetTimer()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] py-1 rounded font-bold transition">リセット</button>
+                    <button onclick="setTimerTime(300)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] py-1 rounded font-bold transition">5分</button>
+                    <button onclick="setTimerTime(600)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] py-1 rounded font-bold transition">10分</button>
+                    <button id="timerStartBtn" onclick="toggleTimer()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[9px] py-1 px-0.5 rounded font-bold transition">開始</button>
+                    <button onclick="resetTimer()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-[9px] py-1 px-0.5 rounded font-bold transition">リセット</button>
+                </div>
+            </div>
+
+            <!-- 単語数カウント表示（タイマーの下に追加） -->
+            <div class="bg-white/95 backdrop-blur border border-slate-200 rounded-lg p-2.5 shadow-sm text-center">
+                <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1 flex items-center justify-center">
+                    <i class="fa-solid fa-font text-emerald-600 mr-1"></i> 単語数カウント
+                </div>
+                <div class="text-xl font-extrabold text-emerald-600 font-mono bg-slate-50 py-1 rounded border border-slate-200">
+                    <span id="wordCountDisplay">0</span> <span class="text-xs font-normal text-slate-500">words</span>
                 </div>
             </div>
 
@@ -113,7 +125,7 @@
                         <i class="fa-solid fa-circle-info text-emerald-600 mr-1"></i> 使い方
                     </h3>
                     <ol class="text-[10px] text-slate-600 space-y-0.5 list-decimal list-inside leading-tight">
-                        <li>反論する相手の立論を選択</li>
+                        <li>これから反論する相手の立論を選択</li>
                         <li>自分の反論を入力・音声入力する</li>
                         <li>下のボタンでプロンプトをコピー</li>
                         <li>AIに貼り付けてフィードバック取得</li>
@@ -129,13 +141,11 @@
                 <div class="flex items-center justify-between mb-1">
                     <h2 class="text-[11px] font-bold text-slate-700 uppercase tracking-wide flex items-center">
                         <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full mr-1.5"></span>
-                        反論対象となる相手の立論
+                        反論対象となる相手の立論 (選択または自由入力)
                     </h2>
                     <span id="presetCategoryBadge" class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded border border-slate-200">Category</span>
                 </div>
-                <div id="targetTextDisplay" class="bg-white border border-slate-200 rounded p-2.5 text-slate-900 text-xs leading-relaxed font-medium shadow-inner max-h-20 overflow-y-auto">
-                    <!-- 立論テキスト -->
-                </div>
+                <textarea id="targetTextDisplay" oninput="updatePromptText()" placeholder="選択したプリセットが表示されます。ここを自由に書き換えることも可能です。" class="w-full bg-white border border-slate-200 rounded p-2.5 text-slate-900 text-xs leading-relaxed font-medium shadow-inner h-20 resize-none focus:ring-1 focus:ring-emerald-500 focus:outline-none"></textarea>
             </div>
 
             <!-- あなたの反論スピーチ入力 -->
@@ -174,8 +184,8 @@
                         <div class="bg-emerald-50 border border-emerald-200 rounded p-2 mb-1.5 text-[10px] text-emerald-900">
                             <span class="font-bold block mb-1"><i class="fa-solid fa-lightbulb text-emerald-600 mr-1"></i> 5つのアタックの型:</span>
                             <div class="grid grid-cols-1 sm:grid-cols-5 gap-1 text-[9px] font-medium text-slate-700">
-                                <span class="bg-white p-1 rounded border border-emerald-200">1. not true</span>
-                                <span class="bg-white p-1 rounded border border-emerald-200">2. not always true</span>
+                                <span class="bg-white p-1 rounded border border-emerald-200">1. not true ( not happen )</span>
+                                <span class="bg-white p-1 rounded border border-emerald-200">2. not always true ( not always happen )</span>
                                 <span class="bg-white p-1 rounded border border-emerald-200">3. not important</span>
                                 <span class="bg-white p-1 rounded border border-emerald-200">4. not relevant</span>
                                 <span class="bg-white p-1 rounded border border-emerald-200">5. the opposite</span>
@@ -256,7 +266,7 @@
     <script>
         const topicsData = [
             {
-                motion: "[E-learning is better than classroom learning.]",
+                motion: "① [E-learning is better than classroom learning.]",
                 category: "E-learning",
                 items: [
                     { label: "AD1: Cost Efficiency", text: "E-learning reduces travel costs and school facility maintenance expenses, making education much more affordable for families." },
@@ -268,7 +278,19 @@
                 ]
             },
             {
-                motion: "[Staying a Western hotel is better than staying in Japanese traditional inn.]",
+                motion: "② [Classroom learning is better than E-learning.]",
+                category: "Classroom Learning",
+                items: [
+                    { label: "AD1: Direct Communication & Socialization", text: "Classroom learning allows real-time face-to-face interaction with teachers and classmates, fostering social skills, teamwork, and immediate feedback." },
+                    { label: "AD2: Structured Environment & Focus", text: "Physical classrooms provide a structured environment free from home distractions, helping students maintain concentration and study habits." },
+                    { label: "AD3: Hands-on & Collaborative Activities", text: "In-person classes enable hands-on experiments, group discussions, and school events that are difficult to replicate effectively in online settings." },
+                    { label: "DA1: Inflexibility in Location & Time", text: "Classroom learning requires daily commuting and strict fixed schedules, which can be exhausting and limiting for students living far away." },
+                    { label: "DA2: Higher Facility & Travel Costs", text: "Maintaining physical school buildings and daily transportation creates significant ongoing costs for both educational institutions and families." },
+                    { label: "DA3: Passive Learning Pace", text: "In a standard classroom setting, lessons move at a uniform pace for the whole class, making it hard for both fast and slow learners to optimize their progress." }
+                ]
+            },
+            {
+                motion: "③ [Staying at a Western hotel is better than staying at a traditional Japanese inn.]",
                 category: "Western Hotel",
                 items: [
                     { label: "AD1: Modern Comfort & Facilities", text: "Staying in a Western hotel provides standardized modern comforts, reliable high-speed Wi-Fi, elevators, and western-style beds, which are physically much more comfortable for international travelers and guests with back issues." },
@@ -280,7 +302,19 @@
                 ]
             },
             {
-                motion: "[Matsuyama is a good city to live in.]",
+                motion: "④ [Staying at a traditional Japanese inn is better than staying at a Western hotel.]",
+                category: "Traditional Japanese Inn",
+                items: [
+                    { label: "AD1: Authentic Cultural Experience", text: "Staying at a traditional Japanese inn allows guests to deeply experience Japanese culture through tatami rooms, futons, yukatas, and traditional architecture." },
+                    { label: "AD2: Omotenashi Hospitality & Kaiseki Meals", text: "Traditional Japanese inns offer heart-felt personal hospitality (Omotenashi) along with elaborate, multi-course local Kaiseki dinners served directly in the guest room or dining hall." },
+                    { label: "AD3: Relaxation with Natural Onsen", text: "Most traditional Japanese inns feature therapeutic natural hot springs (Onsen) and serene Japanese garden views, providing deep physical and mental relaxation." },
+                    { label: "DA1: Barrier & Physical Discomfort", text: "Sleeping on futons on the floor and stepping up over raised thresholds can cause discomfort or physical strain for elderly guests, wheelchair users, or people with knee problems." },
+                    { label: "DA2: Strict Schedule & Lack of Privacy", text: "Traditional Japanese inns usually enforce strict dinner and breakfast times, and staff members frequently enter the room to prepare meals and lay out futons, limiting guest privacy." },
+                    { label: "DA3: Language Barrier & Dietary Restrictions", text: "Many traditional inns have limited English-speaking staff and fixed set menus, making it challenging to accommodate international travelers with severe food allergies or vegetarian dietary needs." }
+                ]
+            },
+            {
+                motion: "⑤ [Matsuyama is a good city to live in.]",
                 category: "Matsuyama City",
                 items: [
                     { label: "AD1: Compact & Comfortable Urban Living", text: "Matsuyama offers a highly convenient lifestyle where residential areas, shopping arcades, and public transport like trams are compactly arranged, reducing daily commuting stress." },
@@ -345,7 +379,7 @@
             const index = document.getElementById('presetSelect').value;
             const preset = flatPresets[index];
             document.getElementById('presetCategoryBadge').innerText = preset.category;
-            document.getElementById('targetTextDisplay').innerText = preset.text;
+            document.getElementById('targetTextDisplay').value = preset.text;
             updatePromptText();
         }
 
@@ -358,7 +392,25 @@
                 const combined = [s1, s2, s3, s4].filter(Boolean).join(' ');
                 document.getElementById('fullInput').value = combined;
             }
+            updateWordCount();
             updatePromptText();
+        }
+
+        // 単語数のカウント機能
+        function updateWordCount() {
+            let text = "";
+            if (currentMode === 'split') {
+                const s1 = document.getElementById('step1Input').value;
+                const s2 = document.getElementById('step2Input').value;
+                const s3 = document.getElementById('step3Input').value;
+                const s4 = document.getElementById('step4Input').value;
+                text = `${s1} ${s2} ${s3} ${s4}`;
+            } else {
+                text = document.getElementById('fullInput').value;
+            }
+            
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            document.getElementById('wordCountDisplay').innerText = words.length;
         }
 
         function clearInput(target) {
@@ -386,17 +438,18 @@
                 return document.getElementById('fullInput').value.trim() || "（未入力）";
             }
         }
+
         // プロンプトテキストの更新
         function updatePromptText() {
             const presetIndex = document.getElementById('presetSelect').value;
             const preset = flatPresets[presetIndex];
-            const targetText = preset.text;
+            const targetText = document.getElementById('targetTextDisplay').value.trim();
             const studentSpeech = getStudentSpeech();
 
             const promptText = `あなたは高校生の英語ディベート学習を指導するコーチです。生徒が作成した反論スピーチ（Rebuttal）について、以下の観点および【評価の項目】に沿って、丁寧で分かりやすい日本語でフィードバックを行ってください。
 
 【評価の観点】
-1. 反論の4ステップ構成（①意見の引用 / ②主張と5つのアタック型: 1. not true, 2. not always true, 3. not important, 4. not relevant, 5. the opposite / ③理由・具体例 / ④結論）
+1. 反論の4ステップ構成（①意見の引用 / ②主張と5つのアタック型: 1. not true ( not happen ), 2. not always true ( not always happen ), 3. not important, 4. not relevant, 5. the opposite / ③理由・具体例 / ④結論）
 2. AREA構造の有無
 3. 英語表現の適切さ（英検準2級レベル基準、発展的表現の肯定）
 
@@ -473,7 +526,7 @@ ${studentSpeech}`;
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-microphone-lines text-red-500 animate-pulse"></i> 録音中...';
 
-            const inputElem = document.getElementById(targetId + (targetId === 'full' ? 'Input' : 'Input'));
+            const inputElem = document.getElementById(targetId + 'Input');
             const startText = inputElem.value;
 
             recognition.onresult = (event) => {
@@ -493,7 +546,7 @@ ${studentSpeech}`;
         }
 
         let timerInterval = null;
-        let timeLeft = 120;
+        let timeLeft = 180;
         let isRunning = false;
 
         function setTimerTime(seconds) {
@@ -511,7 +564,7 @@ ${studentSpeech}`;
                 isRunning = false;
                 btn.innerText = "再開";
             } else {
-                if (timeLeft <= 0) timeLeft = 120;
+                if (timeLeft <= 0) timeLeft = 180;
                 isRunning = true;
                 btn.innerText = "停止";
                 timerInterval = setInterval(() => {
@@ -530,7 +583,7 @@ ${studentSpeech}`;
         function resetTimer() {
             clearInterval(timerInterval);
             isRunning = false;
-            timeLeft = 120;
+            timeLeft = 180;
             updateTimerDisplay();
             document.getElementById('timerStartBtn').innerText = "開始";
         }
